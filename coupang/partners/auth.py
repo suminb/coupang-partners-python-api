@@ -7,6 +7,14 @@ import time
 
 
 def generate_hmac(method, url, access_key, secret_key, encoding="utf-8"):
+    """Generates HMAC signature for authentication.
+
+    :param method: HTTP method
+    :param url:
+    :param access_key:
+    :param secret_key:
+    :param encoding:
+    """
     path, *query = url.split("?")
     os.environ["TZ"] = "GMT+0"
     datetime = time.strftime("%y%m%d") + "T" + time.strftime("%H%M%S") + "Z"
