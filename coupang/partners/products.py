@@ -47,11 +47,17 @@ class APIResponse:
         self.data = json_response["data"]
 
 
+class SearchResults(APIResponse):
+    def __init__(self, json_response):
+        super(SearchResults, self).__init__(json_response)
+        self.landing_url = self.data["landingUrl"]
+        self.records = [Product(r) for r in self.data["productData"]]
+
+
 class Products(APIResponse):
     def __init__(self, json_response):
         super(Products, self).__init__(json_response)
-        self.landing_url = self.data["landingUrl"]
-        self.records = [Product(r) for r in self.data["productData"]]
+        self.records = [Product(r) for r in self.data]
 
 
 class Product:
@@ -77,11 +83,15 @@ class Product:
         self.price = json_response["productPrice"]
         self.image = json_response["productImage"]
         self.url = json_response["productUrl"]
+        self.category = json_response["categoryName"]
+        self.rocket_delivery = json_response["isRocket"]
 
         # Transient properties
         self.keyword = json_response["keyword"]
         self.rank = json_response["rank"]
-        self.rocket_delivery = json_response["isRocket"]
+
+    def __repr__(self):
+        return f"{self.name} ({self.id})"
 
 
 def search(keyword, limit=20):
@@ -101,7 +111,7 @@ def search(keyword, limit=20):
         "Content-Type": "application/json",
     }
     resp = requests.get(url, headers=headers)
-    return Products(json.loads(resp.text))
+    return SearchResults(json.loads(resp.text))
 
 
 def products_by_category(category_id, limit=50):
