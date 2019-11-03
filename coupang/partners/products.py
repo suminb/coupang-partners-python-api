@@ -74,3 +74,29 @@ def search(keyword, limit=20):
     }
     resp = requests.get(url, headers=headers)
     return Products(json.loads(resp.text))
+
+
+def products_by_category(category_id, limit=50):
+    """
+    {
+        "productId": 297564896,
+        "productName": "온스타일러 블랙핑크 후드 롱원피스 가을원피스 캐주얼 원피스 후드원피스 무지원피스",
+        "productPrice": 14450,
+        "productImage": "https://static.coupangcdn.com/image/vendor_inventory/26d7/30fe73751e802399363357df3e92992fbcc7ea7268044910ee31af4aa24f.jpg",
+        "productUrl": "https://landing.coupang.com/multi?src=1139000&spec=10799999&addtag=404&ctag=297564896&lptag=AF8304531&pt=PRODUCT&productId=297564896&traceId=19110322240980012001004814&itemId=937345786&vendorItemId=5321055944&gfrom=bestapi",
+        "categoryName": "여성패션",
+        "keyword": "여성패션",
+        "rank": 1,
+        "isRocket": false
+    }
+    """
+    path = f"/v2/providers/affiliate_open_api/apis/openapi/products/bestcategories/{category_id}?limit={limit}"
+    url = BASE_URL + path
+    authorization = generate_hmac("GET", path, ACCESS_KEY, SECRET_KEY)
+    headers = {
+        "Authorization": authorization,
+        "Content-Type": "application/json",
+    }
+    resp = requests.get(url, headers=headers)
+    # TODO: Handle category
+    return Products(json.loads(resp.text))
