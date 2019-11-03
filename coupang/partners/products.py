@@ -3,19 +3,16 @@ import os
 
 import requests
 
+from coupang.partners import BASE_URL
 from coupang.partners.auth import generate_hmac
 
 # Replace with your own ACCESS_KEY and SECRET_KEY
 ACCESS_KEY = os.environ["CHEAPMIND_ACCESS_KEY"]
 SECRET_KEY = os.environ["CHEAPMIND_SECRET_KEY"]
 
-BASE_URL = "https://api-gateway.coupang.com"
-PATH = "/v2/providers/affiliate_open_api/apis/openapi/v1/deeplink"
-
 
 # TODO: Move this to upper level
 class APIResponse:
-
     def __init__(self, json_response):
         self.response_code = json_response["rCode"]
         self.response_message = json_response["rMessage"]
@@ -23,7 +20,6 @@ class APIResponse:
 
 
 class Products(APIResponse):
-
     def __init__(self, json_response):
         super(Products, self).__init__(json_response)
         self.landing_url = self.data["landingUrl"]
@@ -46,6 +42,7 @@ class Product:
             "isRocket": true
         }
     """
+
     def __init__(self, json_response):
         self.id = json_response["productId"]
         self.name = json_response["productName"]
@@ -60,15 +57,17 @@ class Product:
 
 
 def search(keyword, limit=20):
-    """
-    """
+    """Sends a search request."""
+
     # FIXME: URL encoding for non-ASCII characters? (keyword)
     # NOTE: Query string must be included in the path, otherwise HMAC signature
     # will not be valid.
-    path = "/v2/providers/affiliate_open_api/apis/openapi/products/search" \
+    path = (
+        "/v2/providers/affiliate_open_api/apis/openapi/products/search"
         f"?keyword={keyword}&limit={limit}"
+    )
     url = BASE_URL + path
-    authorization = generate_hmac('GET', path, ACCESS_KEY, SECRET_KEY)
+    authorization = generate_hmac("GET", path, ACCESS_KEY, SECRET_KEY)
     headers = {
         "Authorization": authorization,
         "Content-Type": "application/json",
