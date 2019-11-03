@@ -2,7 +2,7 @@
 
 import setuptools
 from distutils.core import setup
-import coupang
+import coupang.partners
 
 
 def readme():
@@ -16,7 +16,7 @@ def readme():
 setup(
     name="coupang-partners-python-api",
     py_modules=["coupang"],
-    version=coupang.__version__,
+    version=coupang.partners.__version__,
     description="Coupang Partners Python API",
     long_description=readme(),
     author="Sumin Byeon",
