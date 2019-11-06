@@ -4,12 +4,10 @@ from urllib.parse import urlencode
 
 import requests
 
-from coupang.partners import BASE_URL
+from coupang.partners import ACCESS_KEY, BASE_URL, SECRET_KEY
+from coupang.partners import APIResponse
 from coupang.partners.auth import generate_hmac
 
-
-ACCESS_KEY = os.environ["CHEAPMIND_ACCESS_KEY"]
-SECRET_KEY = os.environ["CHEAPMIND_SECRET_KEY"]
 
 categories = {
     1001: "여성패션",
@@ -38,14 +36,6 @@ categories = {
     1026: "해외여행",
     1029: "반려동물용품",
 }
-
-
-# TODO: Move this to upper level
-class APIResponse:
-    def __init__(self, json_response):
-        self.response_code = json_response["rCode"]
-        self.response_message = json_response["rMessage"]
-        self.data = json_response["data"]
 
 
 class SearchResults(APIResponse):
@@ -102,13 +92,9 @@ def search(keyword, limit=20):
     # FIXME: URL encoding for non-ASCII characters? (keyword)
     # NOTE: Query string must be included in the path, otherwise HMAC signature
     # will not be valid.
-    params = {
-        "keyword": keyword,
-        "limit": limit
-    }
-    path = (
-        "/v2/providers/affiliate_open_api/apis/openapi/products/search?" +
-        urlencode(params)
+    params = {"keyword": keyword, "limit": limit}
+    path = "/v2/providers/affiliate_open_api/apis/openapi/products/search?" + urlencode(
+        params
     )
     url = BASE_URL + path
     authorization = generate_hmac("GET", path, ACCESS_KEY, SECRET_KEY)
