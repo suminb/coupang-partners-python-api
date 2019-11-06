@@ -1,12 +1,13 @@
 import json
 import os
+from urllib.parse import urlencode
 
 import requests
 
 from coupang.partners import BASE_URL
 from coupang.partners.auth import generate_hmac
 
-# Replace with your own ACCESS_KEY and SECRET_KEY
+
 ACCESS_KEY = os.environ["CHEAPMIND_ACCESS_KEY"]
 SECRET_KEY = os.environ["CHEAPMIND_SECRET_KEY"]
 
@@ -83,7 +84,8 @@ class Product:
         self.price = json_response["productPrice"]
         self.image = json_response["productImage"]
         self.url = json_response["productUrl"]
-        self.category = json_response["categoryName"]
+        # NOTE: Category name is empty when calling the search API
+        self.category = json_response.get("categoryName")
         self.rocket_delivery = json_response["isRocket"]
 
         # Transient properties
@@ -100,9 +102,13 @@ def search(keyword, limit=20):
     # FIXME: URL encoding for non-ASCII characters? (keyword)
     # NOTE: Query string must be included in the path, otherwise HMAC signature
     # will not be valid.
+    params = {
+        "keyword": keyword,
+        "limit": limit
+    }
     path = (
-        "/v2/providers/affiliate_open_api/apis/openapi/products/search"
-        f"?keyword={keyword}&limit={limit}"
+        "/v2/providers/affiliate_open_api/apis/openapi/products/search?" +
+        urlencode(params)
     )
     url = BASE_URL + path
     authorization = generate_hmac("GET", path, ACCESS_KEY, SECRET_KEY)
