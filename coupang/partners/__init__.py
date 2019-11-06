@@ -4,8 +4,8 @@ import os
 __version__ = "0.1.0"
 
 BASE_URL = "https://api-gateway.coupang.com"
-ACCESS_KEY = os.environ["CHEAPMIND_ACCESS_KEY"]
-SECRET_KEY = os.environ["CHEAPMIND_SECRET_KEY"]
+ACCESS_KEY = os.environ.get("COUPANG_ACCESS_KEY")
+SECRET_KEY = os.environ.get("COUPANG_SECRET_KEY")
 
 
 class APIResponse:
