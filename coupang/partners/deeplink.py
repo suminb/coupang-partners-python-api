@@ -7,6 +7,20 @@ from coupang.partners import APIResponse
 from coupang.partners.auth import generate_hmac
 
 
+class DeeplinkResponse(APIResponse):
+    def __init__(self, json_response):
+        super(DeeplinkResponse, self).__init__(json_response)
+        self.links = [Deeplink(x) for x in self.data]
+
+
+class Deeplink:
+    def __init__(self, json_data):
+        self.data = json_data
+        self.plain_url = self.data["originalUrl"]
+        self.shortened_url = self.data["shortenUrl"]
+        self.landing_url = self.data["landingUrl"]
+
+
 def create_deeplink(coupang_urls):
     """Creates a deeplink for each URL.
 
@@ -28,4 +42,4 @@ def create_deeplink(coupang_urls):
     }
     payload = {"coupangUrls": coupang_urls}
     resp = requests.post(url, headers=headers, data=json.dumps(payload))
-    return APIResponse(json.loads(resp.text))
+    return DeeplinkResponse(json.loads(resp.text))
