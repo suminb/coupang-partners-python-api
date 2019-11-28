@@ -45,9 +45,9 @@ class SearchResults(APIResponse):
         self.records = [Product(r) for r in self.data["productData"]]
 
 
-class Products(APIResponse):
-    def __init__(self, json_response):
-        super(Products, self).__init__(json_response)
+class Products:
+    def __init__(self, json_data):
+        self.data = json_data
         self.records = [Product(r) for r in self.data]
 
 
